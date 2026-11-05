@@ -22,4 +22,4 @@ npm run deploy   # build + wrangler deploy
 
 The source code is released under the [MIT License](LICENSE). Contributions are welcome.
 
-The license does not cover the Claude name, the Claude spark, the Claude Community name and logos, or the brand artwork in `public/brand/` and `brand-src/`. Those are trademarks and assets of Anthropic, used here under the Claude Community ambassador program. If you fork this for another city, replace them with the assets from your own ambassador kit. Claude is a trademark of Anthropic.
+The license does not cover the Claude and Claude Community names, logos and brand artwork in `public/brand/` and `brand-src/`; see [TRADEMARKS.md](TRADEMARKS.md).
