@@ -2,7 +2,7 @@
 
 Landing page for Claude Community Kuala Lumpur. TanStack Start, prerendered, served from Cloudflare Workers.
 
-Maintained by [Hazli Johar](https://github.com/hazlijohar95), the official Claude Ambassador for Kuala Lumpur, Malaysia. This is a community project, not an Anthropic product.
+Maintained by [Hazli Johar](https://github.com/hazlijohar95), the official Claude Ambassador for Kuala Lumpur, Malaysia.
 
 ```bash
 npm install
