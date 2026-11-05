@@ -129,7 +129,7 @@ export function Terminal(hooks: Hooks) {
   };
 
   return (
-    <div className="term">
+    <div className="term rv rv-boot">
       <div className="term-bar">
         <span className="term-dots" aria-hidden="true">
           <i />
@@ -166,7 +166,9 @@ export function Terminal(hooks: Hooks) {
             }}
             autoComplete="off"
             autoCapitalize="off"
+            autoCorrect="off"
             spellCheck={false}
+            enterKeyHint="go"
             placeholder="type /help"
           />
         </form>

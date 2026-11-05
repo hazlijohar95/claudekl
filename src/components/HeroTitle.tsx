@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { prefersReducedMotion } from "../motion";
+import { introSeen, prefersReducedMotion } from "../motion";
 
 const LINES = ["Claude Community", "Kuala Lumpur"] as const;
 const FIRST = LINES[0].length;
@@ -8,17 +8,18 @@ const TOTAL = FIRST + LINES[1].length;
 type Phase = "waiting" | "typing" | "done";
 
 /**
- * The hero title, typed out like a terminal on first paint. `data-phase` is
- * the one signal app.css reads: the prerendered HTML says "waiting" (hidden
- * when JS is on, with a CSS failsafe), typing holds the caret solid, "done"
- * lets it blink. Without JS the full title simply shows.
+ * The hero title, typed out like a terminal on first paint, once per session
+ * (see introSeen). `data-phase` is the one signal app.css reads: the
+ * prerendered HTML says "waiting" (hidden when JS is on, with a CSS
+ * failsafe), typing holds the caret solid, "done" lets it blink. Without JS
+ * the full title simply shows.
  */
 export function HeroTitle() {
   const [typed, setTyped] = useState(TOTAL);
   const [phase, setPhase] = useState<Phase>("waiting");
 
   useEffect(() => {
-    if (prefersReducedMotion()) {
+    if (prefersReducedMotion() || introSeen()) {
       setPhase("done");
       return;
     }

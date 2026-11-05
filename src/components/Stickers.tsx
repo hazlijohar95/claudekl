@@ -236,7 +236,7 @@ export function Stickers() {
               ref={(el) => {
                 els.current[i] = el;
               }}
-              className="sticker"
+              className="sticker rv rv-slap"
               style={{
                 left: `min(${p.x}%, calc(100% - var(--w)))`,
                 top: `min(${p.y}%, calc(100% - var(--w)))`,
@@ -266,7 +266,7 @@ export function Stickers() {
           );
         })}
       </div>
-      <button type="button" className="btn btn-ink" onClick={shuffle}>
+      <button type="button" className="btn btn-ink rv" onClick={shuffle}>
         Shuffle ⤨
       </button>
     </div>

@@ -3,7 +3,7 @@ import { CLAY, INK, IVORY } from "../brand";
 import { EASE_HOP, frameLoop, prefersReducedMotion, useBlink, useSpeech } from "../motion";
 import { clawdLines } from "../site";
 import { play } from "../sound";
-import { Bubble } from "./Bubble";
+import { Announce, Bubble } from "./Bubble";
 import { type Layer, PixelArt, type Rect, Rects } from "./pixel";
 
 // Clawd on the Claude Code pixel grid: 1 col = 10 units, 1 row = 20 units
@@ -44,6 +44,23 @@ const GLINTS: readonly Rect[] = [
   [42, 21, 8, 4],
   [114, 21, 8, 4],
 ];
+// The KL Clawd is the local engineer: thick-rimmed glasses, taped at the
+// bridge. The lenses are open and wide enough that the eyes, which shift
+// LOOK units either way, never touch the rims.
+const RIM = 4;
+const lens = (x: number): Rect[] => [
+  [x, 14, 46, RIM],
+  [x, 42, 46, RIM],
+  [x, 14, RIM, 32],
+  [x + 46 - RIM, 14, RIM, 32],
+];
+const GLASSES: readonly Rect[] = [...lens(32), ...lens(102), [78, 22, 24, RIM]];
+const GLASSES_LIGHT: readonly Rect[] = [
+  [86, 20, 8, 8], // tape on the bridge
+  [37, 19, 6, 3], // glints
+  [107, 19, 6, 3],
+];
+
 const STEP_A: readonly Layer[] = [{ rects: [...BODY, ...LEGS_A], fill: CLAY }];
 const STEP_B: readonly Layer[] = [{ rects: [...BODY, ...LEGS_B], fill: CLAY }];
 
@@ -68,9 +85,19 @@ export const CLAWD_BLINK: Keyframe[] = [{ transform: "scaleY(1)" }, { transform:
 /**
  * Clawd's sprite: two walk frames (CSS shows one by the host's data-step),
  * plus eyes the host can shift (look) and lids it can blink. `shades` puts
- * sunglasses over the eyes.
+ * sunglasses over the eyes; `nerd` gives it taped-up engineer's glasses.
  */
-export function ClawdArt({ eyesRef, lidsRef, shades = false }: { eyesRef: Ref<SVGGElement>; lidsRef: Ref<SVGGElement>; shades?: boolean }) {
+export function ClawdArt({
+  eyesRef,
+  lidsRef,
+  shades = false,
+  nerd = false,
+}: {
+  eyesRef: Ref<SVGGElement>;
+  lidsRef: Ref<SVGGElement>;
+  shades?: boolean;
+  nerd?: boolean;
+}) {
   return (
     <g className="clawd-body">
       <g className="clawd-step-a">
@@ -84,6 +111,12 @@ export function ClawdArt({ eyesRef, lidsRef, shades = false }: { eyesRef: Ref<SV
           <Rects rects={EYES} fill={INK} />
         </g>
       </g>
+      {nerd && (
+        <g>
+          <Rects rects={GLASSES} fill={INK} />
+          <Rects rects={GLASSES_LIGHT} fill={IVORY} />
+        </g>
+      )}
       {shades && (
         <g>
           <Rects rects={SHADES} fill={INK} />
@@ -222,6 +255,7 @@ export function Clawd({ dance = 0, className }: Props) {
           <ClawdArt eyesRef={eyesRef} lidsRef={lidsRef} />
         </svg>
       </button>
+      <Announce text={line} />
     </div>
   );
 }

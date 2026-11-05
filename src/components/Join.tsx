@@ -33,15 +33,15 @@ export function Join() {
   const anyLive = channels.some((c) => c.href);
 
   return (
-    <section id="join" className="section join" aria-labelledby="join-title">
+    <section id="join" className="section join" aria-labelledby="join-title" data-reveal>
       <div className="join-head">
-        <h2 id="join-title" className="join-title">
+        <h2 id="join-title" className="join-title rv">
           Jom<span>.</span>
         </h2>
-        <p className="join-sub">Your seat's saved.</p>
+        <p className="join-sub rv">Your seat's saved.</p>
       </div>
 
-      <article className="pass" aria-label="Boarding pass to Claude Community Kuala Lumpur">
+      <article className="pass rv rv-print" aria-label="Boarding pass to Claude Community Kuala Lumpur">
         <div className="pass-main">
           <div className="pass-top">
             <img src="/brand/logo/spark.svg" alt="" width="100" height="100" />

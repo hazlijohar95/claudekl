@@ -1,7 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import heroFont from "@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url";
-import { CLAY } from "../brand";
+import { IVORY } from "../brand";
 import { siteName, siteUrl } from "../site";
 import appCss from "../styles/app.css?url";
 
@@ -16,7 +16,10 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
-      { name: "theme-color", content: CLAY },
+      // The browser chrome matches the top of the page: the ivory header bar.
+      // The site is light only, so one value covers both schemes.
+      { name: "theme-color", content: IVORY },
+      { name: "color-scheme", content: "light" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: URL },
       { property: "og:title", content: TITLE },

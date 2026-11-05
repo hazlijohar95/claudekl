@@ -17,7 +17,38 @@ import { siteName, siteUrl } from "../site";
 
 export const Route = createFileRoute("/")({ component: Home });
 
+/**
+ * Numbers each [data-reveal] section's .rv parts in page order (--i, the
+ * stagger step), and marks the section data-in the first time it reaches the
+ * upper 65% of the screen, which starts its entrance (app.css, "section
+ * entrances"). That test holds for sections of any height, unlike a share of
+ * the section being visible. The parts are only hidden once this is running
+ * (html.reveals), so if the script never runs the page still shows.
+ */
+function useSectionReveals() {
+  useEffect(() => {
+    document.documentElement.classList.add("reveals");
+    const sections = document.querySelectorAll("[data-reveal]");
+    for (const section of sections) {
+      section.querySelectorAll<HTMLElement>(".rv").forEach((part, i) => part.style.setProperty("--i", String(i)));
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.setAttribute("data-in", "");
+          io.unobserve(e.target);
+        }
+      },
+      { rootMargin: "0px 0px -35% 0px" },
+    );
+    for (const section of sections) io.observe(section);
+    return () => io.disconnect();
+  }, []);
+}
+
 function Home() {
+  useSectionReveals();
   const [poke, setPoke] = useState(0);
   const [clawdDance, setClawdDance] = useState(0);
   const [landing, setLanding] = useState(0);
@@ -54,6 +85,16 @@ function Home() {
             </div>
             <div className="hero-head">
               <HeroTitle />
+              <button
+                type="button"
+                className="btn btn-ink hero-cta"
+                aria-haspopup="dialog"
+                aria-controls="events"
+                data-open-events
+                data-sound="tap"
+              >
+                See upcoming events <span aria-hidden="true">→</span>
+              </button>
             </div>
             <div className="hero-scene">
               <div className="sky">
@@ -64,25 +105,29 @@ function Home() {
           </section>
         </div>
 
-        <section id="programs" className="section" aria-labelledby="programs-title">
+        <section id="programs" className="section" aria-labelledby="programs-title" data-reveal>
           <div className="section-head">
-            <h2 id="programs-title">
+            <h2 id="programs-title" className="rv">
               Four ways <em>in.</em>
             </h2>
-            <span className="hint">Tap a card ↻</span>
+            <span className="hint rv">
+              Tap a card ↻
+            </span>
           </div>
           <Programs />
         </section>
 
-        <section id="terminal" className="section section-ink" aria-labelledby="terminal-title">
+        <section id="terminal" className="section section-ink" aria-labelledby="terminal-title" data-reveal>
           <div className="section-head">
-            <h2 id="terminal-title">
+            <h2 id="terminal-title" className="rv">
               Say <em>hi</em>, in shell.
             </h2>
-            <span className="hint">Try /clawd</span>
+            <span className="hint rv">
+              Try /clawd
+            </span>
           </div>
           <div className="term-stage">
-            <Clawd className="clawd-track-term" dance={clawdDance} />
+            <Clawd className="clawd-track-term rv rv-drop" dance={clawdDance} />
             <Terminal
               onKancil={() => setPoke((p) => p + 1)}
               onClawd={() => setClawdDance((p) => p + 1)}
@@ -91,12 +136,14 @@ function Home() {
           </div>
         </section>
 
-        <section id="stickers" className="section section-clay" aria-labelledby="stickers-title">
+        <section id="stickers" className="section section-clay" aria-labelledby="stickers-title" data-reveal>
           <div className="section-head">
-            <h2 id="stickers-title">
+            <h2 id="stickers-title" className="rv">
               Stickers. <em>Drag 'em.</em>
             </h2>
-            <span className="hint">↓ to download</span>
+            <span className="hint rv">
+              ↓ to download
+            </span>
           </div>
           <Stickers />
         </section>
@@ -144,8 +191,10 @@ function Peek({ poke }: { poke: number }) {
     return () => io.disconnect();
   }, []);
 
+  // Hidden off-screen it's also inert, so Tab never lands on it.
+  const shown = heroGone && !joinNear;
   return (
-    <div className="peek" data-show={heroGone && !joinNear ? "" : undefined}>
+    <div className="peek" data-show={shown ? "" : undefined} inert={!shown}>
       <Kancil poke={poke} />
     </div>
   );

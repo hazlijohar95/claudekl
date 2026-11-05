@@ -10,7 +10,7 @@ export function Programs() {
       {programs.map((p, i) => {
         const isFlipped = flipped === p.slug;
         return (
-          <li key={p.slug}>
+          <li key={p.slug} className="rv rv-deal">
             <button
               type="button"
               className="program"

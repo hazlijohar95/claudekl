@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { luma } from "../site";
 import { play } from "../sound";
 
 /**
  * Header "Events" button. Opens the Luma calendar in a panel under the bar,
  * so people browse and RSVP without leaving the page. The iframe mounts on
- * first open and then stays, so reopening is instant.
+ * first open and then stays, so reopening is instant. Any button carrying
+ * `data-open-events` opens it, this one included.
  */
 export function Events() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -20,6 +21,14 @@ export function Events() {
     dialogRef.current?.close();
   };
 
+  const onDocumentClick = useEffectEvent((e: MouseEvent) => {
+    if (e.target instanceof Element && e.target.closest("[data-open-events]")) open();
+  });
+  useEffect(() => {
+    document.addEventListener("click", onDocumentClick);
+    return () => document.removeEventListener("click", onDocumentClick);
+  }, []);
+
   return (
     <>
       <button
@@ -27,8 +36,8 @@ export function Events() {
         className="btn btn-ink btn-sm"
         aria-haspopup="dialog"
         aria-controls="events"
+        data-open-events
         data-sound="tap"
-        onClick={open}
       >
         Events
       </button>

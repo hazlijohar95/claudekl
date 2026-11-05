@@ -4,6 +4,24 @@ export function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+// The hero intro (typed title, the plane story) plays once per browser tab
+// session; later visits open on the finished scene.
+const INTRO_KEY = "hero-intro-seen";
+export function introSeen() {
+  try {
+    return sessionStorage.getItem(INTRO_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+export function markIntroSeen() {
+  try {
+    sessionStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    // storage blocked: the intro just plays again next time
+  }
+}
+
 export const EASE_HOP = "cubic-bezier(.3,.7,.4,1)";
 /** Same curve as --ease-out in app.css. */
 export const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";

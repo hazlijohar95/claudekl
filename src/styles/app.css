@@ -17,7 +17,8 @@
   --line: 3px;
   --shadow: 6px 6px 0 var(--ink);
   --shadow-lg: 10px 10px 0 var(--ink);
-  --gutter: clamp(16px, 4vw, 48px);
+  /* Never less than the landscape notch's inset on either side. */
+  --gutter: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --bar-h: 64px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -61,6 +62,25 @@ a {
 button {
   font: inherit;
   color: inherit;
+}
+
+/* Controls, not content: fire taps at once (no double-tap-zoom wait), and
+   don't select the label or pop the copy callout on a long press. Text
+   links keep their callout; they're real links. */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+button,
+[role="button"] {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+/* Press feedback for text links, on touch as well as mouse. */
+a:not(.btn):active {
+  opacity: 0.6;
 }
 
 h1,
@@ -127,7 +147,7 @@ em {
     translate 120ms var(--ease-out),
     box-shadow 120ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .btn:hover {
     translate: -2px -2px;
     box-shadow: 8px 8px 0 var(--ink);
@@ -143,7 +163,7 @@ em {
   color: var(--ivory);
   box-shadow: 6px 6px 0 var(--clay-deep);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .btn-ink:hover {
     box-shadow: 8px 8px 0 var(--clay-deep);
   }
@@ -198,7 +218,7 @@ em {
   background: linear-gradient(var(--clay), var(--clay)) left bottom / 0 3px no-repeat;
   transition: background-size 200ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .bar nav a:hover {
     background-size: 100% 3px;
   }
@@ -402,7 +422,7 @@ em {
     background-color 120ms,
     color 120ms;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .events-top a:hover {
     color: var(--ivory);
   }
@@ -496,7 +516,7 @@ em {
     box-shadow 120ms var(--ease-out),
     background 120ms;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .fm-pill:hover {
     translate: -2px -2px;
     box-shadow: 6px 6px 0 var(--ink);
@@ -622,7 +642,7 @@ em {
   font-size: 11px;
   cursor: pointer;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .fm-close:hover {
     background: var(--clay);
     color: var(--ink);
@@ -676,6 +696,9 @@ em {
 .hero-head {
   position: relative;
   margin-top: clamp(4px, 1.4svh, 20px);
+}
+.hero-cta {
+  margin-top: clamp(14px, 2.6svh, 30px);
 }
 .hero-title {
   display: flex;
@@ -917,7 +940,6 @@ em {
   border: 0;
   background: none;
   cursor: pointer;
-  touch-action: manipulation;
 }
 :is(.kancil, .clawd) svg {
   display: block;
@@ -925,11 +947,19 @@ em {
   height: auto;
   overflow: visible;
 }
+@media (prefers-reduced-motion: no-preference) {
+  :is(.kancil, .clawd) svg {
+    transition: scale 120ms ease-out;
+  }
+  :is(.kancil, .clawd):active svg {
+    scale: 0.94;
+  }
+}
 .kancil-ears {
   transform-origin: 208px 84px;
   transition: transform 260ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .kancil:hover .kancil-ears {
     transform: rotate(-7deg);
   }
@@ -1010,7 +1040,7 @@ em {
   transition-duration: 420ms;
   transition-timing-function: var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .peek[data-show]:hover {
     transform: translateY(4%);
   }
@@ -1150,7 +1180,7 @@ em {
     box-shadow 140ms var(--ease-out),
     translate 140ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .program:hover .program-front {
     translate: -4px -4px;
     box-shadow: var(--shadow-lg);
@@ -1187,7 +1217,7 @@ em {
   font-weight: 700;
   transition: rotate 400ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .program:hover .program-flip {
     rotate: 180deg;
   }
@@ -1200,7 +1230,7 @@ em {
   translate: -50% -50%;
   transition: scale 300ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .program:hover .program-icon {
     scale: 1.07 1.07;
   }
@@ -1270,7 +1300,7 @@ em {
   background: var(--clay);
 }
 .term-body {
-  height: clamp(280px, 40vh, 380px);
+  height: clamp(280px, 40svh, 380px);
   overflow-y: auto;
   padding: 18px;
   white-space: pre-wrap;
@@ -1354,7 +1384,7 @@ em {
     border-color 100ms,
     scale 150ms ease-out;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .term-chips button:hover {
     background: var(--clay);
     color: var(--ink);
@@ -1407,6 +1437,10 @@ em {
 .sticker img {
   pointer-events: none;
 }
+.sticker,
+.program img {
+  -webkit-touch-callout: none;
+}
 .sticker-dl {
   position: absolute;
   right: -3px;
@@ -1422,7 +1456,7 @@ em {
   transition: opacity 150ms;
 }
 /* Revealed on hover where there is one; always shown on touch. */
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .sticker-dl {
     opacity: 0;
   }
@@ -1477,7 +1511,7 @@ em {
   filter: drop-shadow(10px 10px 0 var(--clay));
   transition: translate 220ms var(--ease-out);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .pass:hover {
     translate: -3px -3px;
   }
@@ -1660,7 +1694,7 @@ em {
     background-color 120ms,
     color 120ms;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .pass-channels a:hover {
     background: var(--ink);
     color: var(--ivory);
@@ -1747,6 +1781,137 @@ em {
   }
 }
 
+/* ---------- section entrances ----------
+   Each [data-reveal] section gets data-in the first time it's mostly on
+   screen (useSectionReveals in routes/index.tsx). Until then its .rv parts
+   are hidden (only once that hook runs: html.reveals); then each plays its
+   entrance once,
+   staggered by --i, their order within the section. Fill is backwards only, so once a part lands its own
+   styles take over again (hover lifts, drags, flips). */
+.reveals [data-reveal]:not([data-in]) .rv {
+  opacity: 0;
+}
+[data-reveal][data-in] .rv {
+  animation: rv-rise 650ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+/* Programs: the cards are dealt onto the table. */
+[data-reveal][data-in] .rv-deal {
+  animation-name: rv-deal;
+  animation-duration: 700ms;
+}
+/* Terminal: the window powers on like a CRT, then Clawd drops onto it. */
+[data-reveal][data-in] .rv-boot {
+  animation-name: rv-boot;
+  animation-duration: 650ms;
+}
+[data-reveal][data-in] .rv-drop {
+  animation-name: rv-drop;
+  animation-duration: 560ms;
+  animation-timing-function: cubic-bezier(0.3, 1.4, 0.5, 1);
+  animation-delay: 700ms;
+}
+/* Stickers: slapped down onto the board. */
+[data-reveal][data-in] .rv-slap {
+  animation-name: rv-slap;
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.3, 1.35, 0.5, 1);
+}
+/* Join: the boarding pass prints out, top to bottom. */
+[data-reveal][data-in] .rv-print {
+  animation-name: rv-print;
+  animation-duration: 950ms;
+  animation-timing-function: cubic-bezier(0.6, 0, 0.2, 1);
+}
+@keyframes rv-rise {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+}
+@keyframes rv-deal {
+  from {
+    opacity: 0;
+    translate: 0 90px;
+    rotate: -8deg;
+    scale: 0.9;
+  }
+}
+@keyframes rv-boot {
+  from {
+    opacity: 0;
+    scale: 1 0.02;
+    filter: brightness(3);
+  }
+  45% {
+    opacity: 1;
+    scale: 1.02 0.04;
+    filter: brightness(2.4);
+  }
+}
+@keyframes rv-drop {
+  from {
+    opacity: 0;
+    translate: 0 -90px;
+  }
+}
+@keyframes rv-slap {
+  from {
+    opacity: 0;
+    translate: 0 -40px;
+    scale: 1.6;
+  }
+}
+@keyframes rv-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rv-print {
+  from {
+    clip-path: inset(0 0 100% 0);
+    translate: 0 -16px;
+  }
+  to {
+    clip-path: inset(-40px);
+  }
+}
+
+/* ---------- full-screen sections (desktop) ----------
+   With a mouse or trackpad on a screen wide enough for the four program
+   cards in a row, scrolling lands on whole sections: each fills the screen
+   below the bar and the page snaps from one to the next. The parts that
+   grow with the width are capped by the height so each section fits. Phones
+   and tablets scroll freely: their sections are taller than the screen. */
+@media (min-width: 1120px) and (min-height: 640px) and (pointer: fine) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+  .fold,
+  .section {
+    scroll-snap-align: start;
+  }
+  .foot {
+    scroll-snap-align: end;
+  }
+  .section {
+    min-height: calc(100svh - var(--bar-h));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(32px, 6svh, 80px);
+  }
+  .term-body {
+    height: clamp(220px, calc(100svh - var(--bar-h) - 480px), 380px);
+  }
+  .stickers-board {
+    height: clamp(320px, calc(100svh - var(--bar-h) - 344px), 720px);
+  }
+  .join-title {
+    font-size: clamp(110px, min(22vw, 24svh), 340px);
+  }
+}
+
 /* ---------- footer / 404 ---------- */
 
 .foot-logo {
@@ -1777,7 +1942,7 @@ em {
   place-items: center;
   align-content: center;
   gap: 16px;
-  min-height: 100dvh;
+  min-height: 100svh;
   background: var(--clay);
   text-align: center;
 }
@@ -1797,12 +1962,23 @@ em {
   *,
   *::before,
   *::after {
+    transition-property: opacity, color, background-color, border-color, display, overlay !important;
+  }
+  /* Section entrances (.rv) keep their own reduced fade, below. */
+  *:not(.rv),
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-property: opacity, color, background-color, border-color, display, overlay !important;
   }
   html {
     scroll-behavior: auto;
+  }
+  /* Entrances become a plain fade. */
+  [data-reveal][data-in] .rv {
+    animation-name: rv-fade;
+    animation-duration: 300ms;
+    animation-timing-function: ease-out;
   }
   /* Only a slide showed these; give them a fade instead. */
   .peek {

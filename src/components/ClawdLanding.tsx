@@ -1,9 +1,9 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { CLAY, INK, IVORY } from "../brand";
-import { frameLoop, prefersReducedMotion, useBlink, useSpeech } from "../motion";
+import { frameLoop, introSeen, markIntroSeen, prefersReducedMotion, useBlink, useSpeech } from "../motion";
 import { hallLines, klClawdLines, mamakLines, sfClawdLines } from "../site";
 import { play, type SoundName } from "../sound";
-import { Bubble } from "./Bubble";
+import { Announce, Bubble } from "./Bubble";
 import {
   CLAWD_BLINK,
   CLAWD_BODY_CENTRE,
@@ -193,21 +193,29 @@ function withHop(a: Actor, h: { dy: number; sx: number; sy: number }): Actor {
    over the skybridge, cruises slowly for the drop, and climbs away. */
 
 const PLANE_SCALE = 1.7;
+// Where the far leg starts: the city's left edge, or just off the left of the
+// screen when the screen shows less (phones), so the leg is never off-screen.
+const FAR_ENTER = -260;
+const FAR_K0 = 0.2; // depth at the start of the far leg
+// How far the nose reaches ahead of the plane's anchor at that depth (plane
+// art: anchor x 68, nose at 140 plus its outline and shadow), so a leg that
+// starts at the screen edge starts wholly off it.
+const NOSE_AHEAD = (140 + 9 - 68) * PLANE_SCALE * FAR_K0;
 const SWITCH = { x: 455, y: 190, k: 0.45 };
 const DROP = { x: 580, y: 108 };
 const CRUISE_SPEED = 22; // units/s over the drop zone
 
 type PlanePose = { x: number; y: number; k: number; tilt: number; far: boolean; banner: number };
 
-function planeAt(t: number): PlanePose | null {
+function planeAt(t: number, enterX = FAR_ENTER): PlanePose | null {
   if (t < T.far[0] || t >= T.exit[1]) return null;
   const bob = (k: number) => 3 * k * Math.sin(t * 2.6);
   if (t < T.near) {
     const u = seg(t, ...T.far);
     const climb = easeInOut(seg(u, 0.55, 1));
-    const k = lerp(0.2, SWITCH.k, u ** 1.6);
+    const k = lerp(FAR_K0, SWITCH.k, u ** 1.6);
     return {
-      x: lerp(-260, SWITCH.x, u ** 1.35),
+      x: lerp(enterX, SWITCH.x, u ** 1.35),
       y: lerp(262, SWITCH.y, climb) + bob(k),
       k,
       tilt: -6 * climb,
@@ -324,12 +332,12 @@ function onTrip(a: Actor, who: Who, v: number, trip: Trip, still: boolean): Acto
   return out;
 }
 
-function pose(t: number, jumps: Record<Who, number>, outing: Outing | null, still: boolean) {
+function pose(t: number, jumps: Record<Who, number>, outing: Outing | null, still: boolean, enterX = FAR_ENTER) {
   const trip = outing ? TRIPS[outing.place] : null;
   const v = outing ? t - outing.at : -1;
   // KL Clawd: strolls, waits, watches the plane and the drop, walks over.
   const klWalking = inside(t, T.klWalk) || inside(t, T.klApproach);
-  const plane = planeAt(t);
+  const plane = planeAt(t, enterX);
   const klX =
     t < T.klApproach[0]
       ? lerp(KL_X[0], KL_X[1], seg(t, ...T.klWalk))
@@ -497,7 +505,9 @@ export function ClawdLanding({ replay = 0 }: { replay?: number }) {
   }, []);
 
   useEffect(() => {
-    clock.current = prefersReducedMotion() ? T.end : 0;
+    // Replays (replay > 0) always play; the first mount skips to the end if
+    // this session has already seen it.
+    clock.current = prefersReducedMotion() || (replay === 0 && introSeen()) ? T.end : 0;
     jumps.current = { ...NO_JUMPS };
     outing.current = null;
     wake.current();
@@ -543,8 +553,11 @@ export function ClawdLanding({ replay = 0 }: { replay?: number }) {
             if (prevT < at && t >= at) play(cue.sound);
           }
       }
+      if (prevT < T.end && t >= T.end) markIntroSeen();
       prevT = t;
-      const p = pose(t, jumps.current, o, reduced);
+      // The scene x at the screen's left edge, from the stage's own box.
+      const screenX0 = (-box.left / box.width) * SCENE.w;
+      const p = pose(t, jumps.current, o, reduced, Math.max(FAR_ENTER, screenX0 - NOSE_AHEAD));
 
       // Eyes: scripted during the story, then they watch the pointer.
       const lookAt = (a: Actor) =>
@@ -711,11 +724,11 @@ export function ClawdLanding({ replay = 0 }: { replay?: number }) {
           transform={KL_START}
           role="button"
           tabIndex={0}
-          aria-label="KL Clawd. Click to make it jump."
+          aria-label="KL Clawd, in taped-up glasses. Click to make it jump."
           onClick={() => poke("kl")}
           onKeyDown={activate(() => poke("kl"))}
         >
-          <ClawdArt eyesRef={el.klEyes} lidsRef={el.klLids} />
+          <ClawdArt eyesRef={el.klEyes} lidsRef={el.klLids} nerd />
           <g ref={el.klMug} display="none">
             <MugArt />
           </g>
@@ -747,9 +760,11 @@ export function ClawdLanding({ replay = 0 }: { replay?: number }) {
       </svg>
       <div className="stage-say" ref={el.klSay}>
         <Bubble line={klTap ?? klScript} />
+        <Announce text={klTap} />
       </div>
       <div className="stage-say" ref={el.sfSay}>
         <Bubble line={sfTap ?? sfScript} />
+        <Announce text={sfTap} />
       </div>
       {places.map(({ where, box, hint, line }) => (
         <div
@@ -761,6 +776,7 @@ export function ClawdLanding({ replay = 0 }: { replay?: number }) {
           }}
         >
           <Bubble line={line ?? (hover === where ? hint : null)} />
+          <Announce text={line} />
         </div>
       ))}
     </div>
