@@ -1,7 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3417 },
-    { "name": "dev-alt", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "dev", "--port", "3418"], "port": 3418 }
-  ]
-}

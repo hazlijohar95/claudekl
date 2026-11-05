@@ -9,3 +9,6 @@ Claude Assets
 
 .DS_Store
 .claude/.cc-writes
+
+# Local editor and agent config
+.claude/

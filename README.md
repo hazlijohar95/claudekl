@@ -2,6 +2,8 @@
 
 Landing page for Claude Community Kuala Lumpur. TanStack Start, prerendered, served from Cloudflare Workers.
 
+Maintained by [Hazli Johar](https://github.com/hazlijohar95), the official Claude Ambassador for Kuala Lumpur, Malaysia. This is a community project, not an Anthropic product.
+
 ```bash
 npm install
 npm run dev      # http://localhost:3417
@@ -15,3 +17,9 @@ npm run deploy   # build + wrangler deploy
 - Logo set in `public/brand/logo/` (badge, lockup, symbol, tile). The header/footer lockup uses the official Claude spark, traced once from the ambassador kit deck into `brand-src/claude-spark.svg`. Text is outlined from the brand fonts, so no font files ship. Rebuild with:
   `python3 scripts/build-logo.py <city-community-assets>/assets/fonts`
 - Site body fonts are open-source stand-ins (Newsreader, Space Grotesk, JetBrains Mono). To use the Anthropic brand fonts, swap the `@import`s and `--serif`/`--sans` in `src/styles/app.css`, if your ambassador kit licenses them for web use.
+
+## License
+
+The source code is released under the [MIT License](LICENSE). Contributions are welcome.
+
+The license does not cover the Claude name, the Claude spark, the Claude Community name and logos, or the brand artwork in `public/brand/` and `brand-src/`. Those are trademarks and assets of Anthropic, used here under the Claude Community ambassador program. If you fork this for another city, replace them with the assets from your own ambassador kit. Claude is a trademark of Anthropic.
