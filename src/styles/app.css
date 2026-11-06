@@ -1,6 +1,15 @@
-@import "@fontsource-variable/newsreader/opsz.css";
 @import "@fontsource-variable/space-grotesk/index.css";
 @import "@fontsource-variable/jetbrains-mono/index.css";
+
+/* Newsreader, cut to the weights, optical sizes and characters the page sets
+   (scripts/subset-fonts.py): 37 KB instead of 132 KB on the critical path. */
+@font-face {
+  font-family: "Newsreader Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 400;
+  src: url("../fonts/newsreader-display.woff2") format("woff2-variations");
+}
 
 :root {
   --clay: #d97757;
@@ -232,15 +241,25 @@ em {
   font-variant-numeric: tabular-nums;
 }
 .clock-dot {
+  position: relative;
   width: 9px;
   height: 9px;
   background: var(--clay);
   border: 2px solid var(--ink);
+}
+/* The blink is an ink layer fading in and out: opacity runs on the
+   compositor, where animating the background repainted every frame. */
+.clock-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0;
   animation: pulse 1.6s steps(2, jump-none) infinite;
 }
 @keyframes pulse {
   50% {
-    background: var(--ink);
+    opacity: 1;
   }
 }
 /* Lives in the footer, on ink. */
@@ -758,7 +777,7 @@ em {
    gets that far. ---- */
 .js .hero-title[data-phase="waiting"] {
   visibility: hidden;
-  animation: intro-failsafe 0s 3s forwards;
+  animation: intro-failsafe 0s 1.5s forwards;
 }
 @keyframes intro-failsafe {
   to {
@@ -2252,6 +2271,7 @@ em {
     position: relative;
     display: block;
     width: 100%;
+    aspect-ratio: 1;
     padding: 0;
     border: var(--line) solid var(--ink);
     background: var(--clay);
@@ -2397,6 +2417,15 @@ em {
   .clock {
     display: none;
   }
+}
+
+/* Off screen, a section's looping animations stop: they otherwise keep the
+   main thread restyling and repainting every frame for nothing anyone sees
+   (usePauseOffscreen in routes/index.tsx). */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
 }
 
 /* ---------- full-screen sections (desktop) ----------

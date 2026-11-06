@@ -1,4 +1,5 @@
 import { type MouseEvent, type PointerEvent, useEffect, useRef, useState } from "react";
+import { useNear } from "../motion";
 import { plateSrcSet, siteName, stickers } from "../site";
 import { play } from "../sound";
 import { PHONE, useSheetDrag } from "./sheet";
@@ -33,6 +34,8 @@ export function StickerRail() {
   const skipClick = useRef(false);
   const sheetRef = useRef<HTMLDialogElement>(null);
   const savedTimer = useRef(0);
+  const railRef = useRef<HTMLUListElement>(null);
+  const near = useNear(railRef);
 
   const close = () => {
     play("tap");
@@ -109,7 +112,7 @@ export function StickerRail() {
 
   return (
     <div className="sticker-rail-wrap">
-      <ul className="sticker-rail" role="list">
+      <ul className="sticker-rail" role="list" ref={railRef}>
         {stickers.map((s, i) => (
           <li key={s.name} className="rv rv-deal" style={{ rotate: `${TILT[i % TILT.length]}deg` }}>
             <button
@@ -127,17 +130,18 @@ export function StickerRail() {
               onContextMenu={(e) => e.preventDefault()}
               onClick={(e) => onClick(i, e)}
             >
-              <img
-                src={s.src}
-                srcSet={plateSrcSet(s.src)}
-                sizes="(max-width: 532px) 44vw, 220px"
-                alt=""
-                draggable={false}
-                width="1080"
-                height="1080"
-                loading="lazy"
-                decoding="async"
-              />
+              {near && (
+                <img
+                  src={s.src}
+                  srcSet={plateSrcSet(s.src)}
+                  sizes="(max-width: 532px) 44vw, 220px"
+                  alt=""
+                  draggable={false}
+                  width="1080"
+                  height="1080"
+                  decoding="async"
+                />
+              )}
               <span className="rail-stamp" aria-hidden="true">
                 Saved ↓
               </span>
@@ -179,6 +183,8 @@ export function StickerRail() {
                 alt={`${siteName} — ${shown.name}`}
                 width="1080"
                 height="1080"
+                // Lazy in a closed dialog: fetched on first open, and not preloaded with the page.
+                loading="lazy"
                 decoding="async"
               />
               <a href={shown.download} download className="btn btn-ink sheet-cta" data-sound="tap">

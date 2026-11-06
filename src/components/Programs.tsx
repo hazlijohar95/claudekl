@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNear } from "../motion";
 import { plateSrcSet, programs } from "../site";
 import { play } from "../sound";
 
@@ -7,6 +8,8 @@ export function Programs() {
   // Phones show the cards as a swipe carousel (app.css); this is the card in front.
   const [current, setCurrent] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
+  // The plates on the backs only show on a flip: fetch them once the cards are near.
+  const near = useNear(listRef);
 
   const onScroll = () => {
     const list = listRef.current;
@@ -46,16 +49,17 @@ export function Programs() {
                     <span className="program-tag">{p.tagline}</span>
                   </span>
                   <span className="program-face program-back">
-                    <img
-                      src={p.card}
-                      srcSet={plateSrcSet(p.card)}
-                      sizes="(min-width: 1120px) 25vw, (min-width: 761px) 50vw, (max-width: 460px) 78vw, 360px"
-                      alt=""
-                      width="1080"
-                      height="1080"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    {near && (
+                      <img
+                        src={p.card}
+                        srcSet={plateSrcSet(p.card)}
+                        sizes="(min-width: 1120px) 25vw, (min-width: 761px) 50vw, (max-width: 460px) 78vw, 360px"
+                        alt=""
+                        width="1080"
+                        height="1080"
+                        decoding="async"
+                      />
+                    )}
                   </span>
                 </span>
               </button>

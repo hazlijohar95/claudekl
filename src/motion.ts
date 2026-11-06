@@ -131,6 +131,29 @@ export function frameLoop(el: Element, tick: (f: Frame) => boolean) {
   return { stop, wake: () => wakeUp() };
 }
 
+/**
+ * True once `ref` comes within `margin` of the viewport, and from then on.
+ * For images that only matter further down the page: native lazy loading
+ * starts them up to 2,500px early, in the middle of the first load, where
+ * they compete with the app's own scripts for the connection.
+ */
+export function useNear(ref: RefObject<Element | null>, margin = "600px") {
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || near) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) setNear(true);
+      },
+      { rootMargin: margin },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, margin, near]);
+  return near;
+}
+
 /** Play `keyframes` on `ref` every few seconds, like a blink. */
 export function useBlink(ref: RefObject<Element | null>, keyframes: Keyframe[], duration: number) {
   useEffect(() => {

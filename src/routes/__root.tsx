@@ -1,6 +1,6 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import heroFont from "@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url";
+import heroFont from "../fonts/newsreader-display.woff2?url";
 import { IVORY } from "../brand";
 import { siteName, siteUrl } from "../site";
 import appCss from "../styles/app.css?url";

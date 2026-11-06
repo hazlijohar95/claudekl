@@ -7,19 +7,24 @@ const TOTAL = FIRST + LINES[1].length;
 
 type Phase = "waiting" | "typing" | "done";
 
+// The intro never holds the title back: if the page took longer than this to
+// start (slow phone, slow network), the title shows whole instead. app.css's
+// failsafe reveals it at 1.5s, just after.
+const INTRO_DEADLINE_MS = 1400;
+
 /**
  * The hero title, typed out like a terminal on first paint, once per session
- * (see introSeen). `data-phase` is the one signal app.css reads: the
- * prerendered HTML says "waiting" (hidden when JS is on, with a CSS
- * failsafe), typing holds the caret solid, "done" lets it blink. Without JS
- * the full title simply shows.
+ * (see introSeen) and only when the page starts fast (INTRO_DEADLINE_MS).
+ * `data-phase` is the one signal app.css reads: the prerendered HTML says
+ * "waiting" (hidden when JS is on, with a CSS failsafe), typing holds the
+ * caret solid, "done" lets it blink. Without JS the full title simply shows.
  */
 export function HeroTitle() {
   const [typed, setTyped] = useState(TOTAL);
   const [phase, setPhase] = useState<Phase>("waiting");
 
   useEffect(() => {
-    if (prefersReducedMotion() || introSeen()) {
+    if (prefersReducedMotion() || introSeen() || performance.now() > INTRO_DEADLINE_MS) {
       setPhase("done");
       return;
     }

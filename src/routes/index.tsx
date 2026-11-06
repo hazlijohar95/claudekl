@@ -51,8 +51,27 @@ function useSectionReveals() {
   }, []);
 }
 
+/**
+ * Marks the hero and each section data-offscreen while it's out of view, which
+ * pauses its looping CSS animations (app.css). They wake a little before the
+ * section scrolls back in.
+ */
+function usePauseOffscreen() {
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) e.target.toggleAttribute("data-offscreen", !e.isIntersecting);
+      },
+      { rootMargin: "120px 0px" },
+    );
+    for (const el of document.querySelectorAll("#hero, .section")) io.observe(el);
+    return () => io.disconnect();
+  }, []);
+}
+
 function Home() {
   useSectionReveals();
+  usePauseOffscreen();
   const [poke, setPoke] = useState(0);
   const [clawdDance, setClawdDance] = useState(0);
   const [landing, setLanding] = useState(0);
@@ -64,7 +83,7 @@ function Home() {
       </a>
       <header className="bar">
         <a href="/" className="logo" aria-label={`${siteName} home`}>
-          <img src="/brand/logo/lockup.svg" alt="" width="640" height="120" />
+          <img src="/brand/logo/lockup.svg" alt="" width="640" height="120" fetchPriority="high" />
         </a>
         <nav aria-label="Sections">
           <a href="#programs" data-sound="tap">
@@ -157,7 +176,14 @@ function Home() {
       </main>
 
       <footer className="foot">
-        <img src="/brand/logo/lockup-ivory.svg" alt={siteName} width="640" height="120" className="foot-logo" />
+        <img
+          src="/brand/logo/lockup-ivory.svg"
+          alt={siteName}
+          width="640"
+          height="120"
+          className="foot-logo"
+          loading="lazy"
+        />
         <span>{new URL(siteUrl).host}</span>
         <span>A Claude Community chapter · Kuala Lumpur, MY</span>
         <span>Claude is a trademark of Anthropic.</span>
