@@ -501,7 +501,9 @@ em {
   padding: clamp(12px, 2.4svh, 32px) var(--gutter) 0;
   background: var(--clay);
   border-bottom: var(--line) solid var(--ink);
-  overflow: hidden;
+  /* clip, not hidden: the scene is wider than the screen, and a hidden
+     overflow can still be scrolled sideways by focus or scrollIntoView. */
+  overflow: clip;
 }
 .hero-meta {
   position: relative;

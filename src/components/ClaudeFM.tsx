@@ -25,6 +25,9 @@ type Phase = "off" | "on" | "closing";
 type Place = "below" | "left";
 
 const GAP = 12;
+// Phones (iOS above all) block autoplay with sound in an embed. If the stream
+// hasn't started by now, the static clears to show YouTube's own play button.
+const AUTOPLAY_WAIT_MS = 2500;
 
 function overlap(a: DOMRect, b: DOMRect) {
   const w = Math.min(a.right, b.right) - Math.max(a.left, b.left);
@@ -71,6 +74,8 @@ function choosePlace(pill: DOMRect, w: number, h: number): Place {
 export function ClaudeFM() {
   const [phase, setPhase] = useState<Phase>("off");
   const [playing, setPlaying] = useState(false);
+  // Autoplay was blocked: the viewer starts the stream with YouTube's button.
+  const [needsTap, setNeedsTap] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLButtonElement>(null);
@@ -111,6 +116,7 @@ export function ClaudeFM() {
     if (phase !== "on") return;
     post({ event: "command", func: "pauseVideo", args: [] }); // silence at once; the picture collapses after
     setPlaying(false);
+    setNeedsTap(false);
     setPhase("closing");
     play("tap");
     const reduced = prefersReducedMotion();
@@ -150,12 +156,13 @@ export function ClaudeFM() {
     };
     window.addEventListener("message", onMessage);
     window.addEventListener("keydown", onKey);
+    const stall = window.setTimeout(() => setNeedsTap(true), AUTOPLAY_WAIT_MS);
     return () => {
       window.removeEventListener("message", onMessage);
       window.removeEventListener("keydown", onKey);
+      window.clearTimeout(stall);
     };
   }, [phase]);
-
 
   return (
     <div className="fm" data-open={phase === "on" ? "" : undefined}>
@@ -174,7 +181,7 @@ export function ClaudeFM() {
           <i />
         </span>
         <span>Claude FM</span>
-        <span className="fm-state">{phase === "on" ? (playing ? "On air" : "Tuning…") : "Play ▶"}</span>
+        <span className="fm-state">{phase === "on" ? (playing ? "On air" : needsTap ? "Tap ▶" : "Tuning…") : "Play ▶"}</span>
       </button>
 
       {shown && (
@@ -198,7 +205,7 @@ export function ClaudeFM() {
               referrerPolicy="strict-origin-when-cross-origin"
               onLoad={() => post({ event: "listening", id: "claude-fm", channel: "widget" })}
             />
-            <span className="fm-static" data-hidden={playing ? "" : undefined} aria-hidden="true" />
+            <span className="fm-static" data-hidden={playing || needsTap ? "" : undefined} aria-hidden="true" />
             <span className="fm-scanlines" aria-hidden="true" />
           </div>
         </div>
