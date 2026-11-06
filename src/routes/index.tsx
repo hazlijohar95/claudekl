@@ -11,7 +11,9 @@ import { Kancil } from "../components/Kancil";
 import { Programs } from "../components/Programs";
 import { Skyline } from "../components/Skyline";
 import { SoundToggle } from "../components/SoundToggle";
+import { StickerRail } from "../components/StickerRail";
 import { Stickers } from "../components/Stickers";
+import { TabBar } from "../components/TabBar";
 import { Terminal } from "../components/Terminal";
 import { siteName, siteUrl } from "../site";
 
@@ -30,7 +32,9 @@ function useSectionReveals() {
     document.documentElement.classList.add("reveals");
     const sections = document.querySelectorAll("[data-reveal]");
     for (const section of sections) {
-      section.querySelectorAll<HTMLElement>(".rv").forEach((part, i) => part.style.setProperty("--i", String(i)));
+      // Parts hidden at this width (desktop-only or phone-only) don't take a step.
+      const parts = [...section.querySelectorAll<HTMLElement>(".rv")].filter((part) => part.getClientRects().length > 0);
+      parts.forEach((part, i) => part.style.setProperty("--i", String(i)));
     }
     const io = new IntersectionObserver(
       (entries) => {
@@ -139,13 +143,14 @@ function Home() {
         <section id="stickers" className="section section-clay" aria-labelledby="stickers-title" data-reveal>
           <div className="section-head">
             <h2 id="stickers-title" className="rv">
-              Stickers. <em>Drag 'em.</em>
+              Stickers. <em className="wide">Drag 'em.</em>
+              <em className="narrow">Swipe 'em.</em>
             </h2>
-            <span className="hint rv">
-              ↓ to download
-            </span>
+            <span className="hint rv wide">↓ to download</span>
+            <span className="hint rv narrow">Hold to save</span>
           </div>
           <Stickers />
+          <StickerRail />
         </section>
 
         <Join />
@@ -159,6 +164,7 @@ function Home() {
         <SoundToggle />
       </footer>
 
+      <TabBar />
       <Peek poke={poke} />
     </>
   );

@@ -43,6 +43,24 @@ export function onPointer(fn: (p: Point) => void): () => void {
   };
 }
 
+// A drag's release velocity is measured over its last stretch.
+const VELOCITY_WINDOW = 80;
+export type Sample = { t: number; x: number; y: number };
+
+/** Add a pointer sample, dropping those older than the velocity window. */
+export function track(samples: Sample[], s: Sample) {
+  samples.push(s);
+  while (samples.length > 2 && s.t - (samples[0]?.t ?? 0) > VELOCITY_WINDOW) samples.shift();
+}
+
+/** Pointer velocity in px/ms over the window ending at `end`; zero if the pointer had stopped. */
+export function velocity(samples: readonly Sample[], end: Sample): Point {
+  const first = samples.find((s) => end.t - s.t <= VELOCITY_WINDOW);
+  const dt = first ? end.t - first.t : 0;
+  if (!first || dt <= 0) return { x: 0, y: 0 };
+  return { x: (end.x - first.x) / dt, y: (end.y - first.y) / dt };
+}
+
 /** Run `start` while `el` is on screen; it returns its own stop function. */
 export function whileVisible(el: Element, start: () => () => void): () => void {
   let stop: (() => void) | null = null;

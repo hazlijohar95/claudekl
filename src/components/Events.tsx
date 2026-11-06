@@ -1,6 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { luma } from "../site";
 import { play } from "../sound";
+import { useSheetDrag } from "./sheet";
 
 /**
  * Header "Events" button. Opens the Luma calendar in a panel under the bar,
@@ -20,6 +21,7 @@ export function Events() {
     play("tap");
     dialogRef.current?.close();
   };
+  const drag = useSheetDrag(dialogRef, close);
 
   const onDocumentClick = useEffectEvent((e: MouseEvent) => {
     if (e.target instanceof Element && e.target.closest("[data-open-events]")) open();
@@ -44,7 +46,7 @@ export function Events() {
       <dialog
         ref={dialogRef}
         id="events"
-        className="events"
+        className="events sheet"
         aria-labelledby="events-title"
         onCancel={() => play("tap")}
         // A click that lands on the dialog itself, not its panel, is the backdrop.
@@ -53,18 +55,22 @@ export function Events() {
         }}
       >
         <div className="events-panel">
-          <div className="events-top">
-            <span className="events-dot" aria-hidden="true" />
-            <h2 id="events-title" className="events-title">
-              Upcoming events
-            </h2>
-            <a href={luma.url} target="_blank" rel="noreferrer" data-sound="tap">
-              Luma ↗
-            </a>
-            {/* Focus starts here, not in the iframe, so Esc reaches the dialog. */}
-            <button type="button" className="events-close" aria-label="Close events" onClick={close} autoFocus>
-              ✕
-            </button>
+          {/* On phones the panel is a bottom sheet: drag the grip or bar down to dismiss. */}
+          <div className="sheet-handle" {...drag}>
+            <span className="sheet-grip" aria-hidden="true" />
+            <div className="events-top">
+              <span className="events-dot" aria-hidden="true" />
+              <h2 id="events-title" className="events-title">
+                Upcoming events
+              </h2>
+              <a href={luma.url} target="_blank" rel="noreferrer" data-sound="tap">
+                Luma ↗
+              </a>
+              {/* Focus starts here, not in the iframe, so Esc reaches the dialog. */}
+              <button type="button" className="events-close" aria-label="Close events" onClick={close} autoFocus>
+                ✕
+              </button>
+            </div>
           </div>
           <div className="events-frame">
             <p className="events-loading" aria-hidden="true">

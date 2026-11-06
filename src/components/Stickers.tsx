@@ -1,5 +1,5 @@
 import { type PointerEvent, useLayoutEffect, useRef, useState } from "react";
-import { EASE_OUT, type Point, prefersReducedMotion } from "../motion";
+import { EASE_OUT, type Point, prefersReducedMotion, type Sample, track, velocity } from "../motion";
 import { plateSrcSet, siteName, stickers } from "../site";
 import { play } from "../sound";
 
@@ -30,22 +30,9 @@ const RUBBER = 0.2;
 const THROW_SPEED = 0.11;
 // ...by this many ms of its release velocity, clamped to the board.
 const THROW_CARRY = 120;
-// Release velocity is measured over the last stretch of the drag.
-const VELOCITY_WINDOW = 80;
-
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 const rubber = (v: number, min: number, max: number) =>
   v < min ? min + (v - min) * RUBBER : v > max ? max + (v - max) * RUBBER : v;
-
-type Sample = { t: number; x: number; y: number };
-
-/** Pointer velocity in px/ms over the window ending at `end`; zero if the pointer had stopped. */
-function velocity(samples: readonly Sample[], end: Sample): Point {
-  const first = samples.find((s) => end.t - s.t <= VELOCITY_WINDOW);
-  const dt = first ? end.t - first.t : 0;
-  if (!first || dt <= 0) return { x: 0, y: 0 };
-  return { x: (end.x - first.x) / dt, y: (end.y - first.y) / dt };
-}
 
 /** The translate a sticker shows right now: inline (dragging) or mid-animation. */
 function shownTranslate(el: HTMLElement): Point {
@@ -188,8 +175,7 @@ export function Stickers() {
     d.dx = fit(e.clientX - d.startX, box.x, box.x + box.width);
     d.dy = fit(e.clientY - d.startY, box.y, box.y + box.height);
     d.el.style.translate = `${d.dx}px ${d.dy}px`;
-    d.samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY });
-    while (d.samples.length > 2 && e.timeStamp - (d.samples[0]?.t ?? 0) > VELOCITY_WINDOW) d.samples.shift();
+    track(d.samples, { t: e.timeStamp, x: e.clientX, y: e.clientY });
   };
 
   // Release: a fast flick carries on, anything past an edge springs back,
