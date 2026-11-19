@@ -16,7 +16,7 @@ npm run deploy   # build + wrangler deploy
 - Mascots: Sang Kancil (`src/components/Kancil.tsx`) and pixel Clawd (`src/components/Clawd.tsx`).
 - Logo set in `public/brand/logo/` (badge, lockup, symbol, tile). The header/footer lockup uses the official Claude spark, traced once from the ambassador kit deck into `brand-src/claude-spark.svg`. Text is outlined from the brand fonts, so no font files ship. Rebuild with:
   `python3 scripts/build-logo.py <city-community-assets>/assets/fonts`
-- Site body fonts are open-source stand-ins (Newsreader, Space Grotesk, JetBrains Mono). To use the Anthropic brand fonts, swap the `@import`s and `--serif`/`--sans` in `src/styles/app.css`, if your ambassador kit licenses them for web use.
+- Headings use Anthropic Serif Display Light from the event kit, subset into `src/fonts/` with `python3 scripts/subset-fonts.py <kit>/03\ Font\ files`. The kit has no italic, so the serif is never set italic. Body and label fonts are open-source (Space Grotesk, JetBrains Mono).
 
 ## License
 

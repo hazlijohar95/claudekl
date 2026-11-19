@@ -5,6 +5,31 @@ export const siteName = "Claude Community Kuala Lumpur";
 export const siteUrl = "https://claudekl.com";
 export const coords = "3.1390°N 101.6869°E";
 
+/** The chapter's host, credited quietly in the footer. */
+export const host = {
+  name: "Hazli Johar",
+  ambassadors: "https://claude.com/community/ambassadors#directory",
+};
+
+type Credits = {
+  event: string;
+  amount: string;
+  url: string;
+  /** After this moment /credit says no offer is running, so strangers can't use up the claims. */
+  until: string;
+};
+
+/**
+ * API credits for one event, shown as a QR by the terminal's hidden /credit
+ * command. Set to null between events.
+ */
+export const credits: Credits | null = {
+  event: "Claude for Marketing Workshop",
+  amount: "$50",
+  url: "https://platform.claude.com/offers/a4773796-2d60-4d22-bc0f-01824399e4ad",
+  until: "2026-11-19T23:59:59+08:00",
+};
+
 /** Claude FM, the official Claude channel's music stream. */
 const claudeFmId = "tRsQsTMvPNg";
 export const claudeFm = { videoId: claudeFmId, url: `https://www.youtube.com/watch?v=${claudeFmId}` };

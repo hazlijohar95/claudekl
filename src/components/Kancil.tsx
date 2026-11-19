@@ -1,5 +1,5 @@
 import { useEffect, useEffectEvent, useId, useRef } from "react";
-import { CLAY, INK, IVORY } from "../brand";
+import { CLAY, INK, IVORY, STROKE } from "../brand";
 import { EASE_HOP, onPointer, prefersReducedMotion, useBlink, useSpeech, whileVisible } from "../motion";
 import { kancilLines } from "../site";
 import { play } from "../sound";
@@ -91,7 +91,7 @@ export function Kancil({ poke = 0 }: Props) {
           </defs>
           <ellipse cx="150" cy="268" rx="92" ry="7" fill={INK} opacity="0.18" />
           <g ref={bodyRef} className="kancil-body" style={{ transformOrigin: "150px 268px" }}>
-            <g filter={`url(#${filterId})`} stroke={INK} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
+            <g filter={`url(#${filterId})`} stroke={INK} strokeWidth={STROKE.outline} strokeLinecap="round" strokeLinejoin="round">
               {/* far legs */}
               <path d="M112 200 L106 262 M100 263 H112" fill="none" />
               <path d="M200 200 L208 258 M203 259 H215" fill="none" />
@@ -110,15 +110,15 @@ export function Kancil({ poke = 0 }: Props) {
                 fill={IVORY}
               />
               {/* coat marks */}
-              <path d="M120 150 C135 144 150 144 162 148" fill="none" strokeWidth="3.5" />
-              <path d="M198 140 C203 146 205 152 203 160" fill="none" strokeWidth="3.5" />
+              <path d="M120 150 C135 144 150 144 162 148" fill="none" strokeWidth={STROKE.detail} />
+              <path d="M198 140 C203 146 205 152 203 160" fill="none" strokeWidth={STROKE.detail} />
               {/* near legs */}
               <path d="M132 212 L128 266 M122 267 H135" fill="none" />
               <path d="M176 212 L182 266 M177 267 H190" fill="none" />
               {/* lanyard + badge */}
-              <path d="M204 118 L213 150 L227 120" fill="none" strokeWidth="3" />
+              <path d="M204 118 L213 150 L227 120" fill="none" strokeWidth={STROKE.detail} />
               <g transform="rotate(-8 214 160)">
-                <rect x="199" y="150" width="30" height="22" fill={CLAY} strokeWidth="3.5" />
+                <rect x="199" y="150" width="30" height="22" fill={CLAY} strokeWidth={STROKE.detail} />
                 <text
                   x="214"
                   y="166"
@@ -138,18 +138,18 @@ export function Kancil({ poke = 0 }: Props) {
                 fill={IVORY}
               />
               <ellipse cx="269" cy="99" rx="5.5" ry="4.5" fill={INK} />
-              <path d="M255 113 Q260 118 266 113" fill="none" strokeWidth="3" />
+              <path d="M255 113 Q260 118 266 113" fill="none" strokeWidth={STROKE.detail} />
               <ellipse cx="246" cy="107" rx="6" ry="3.5" fill={CLAY} stroke="none" opacity="0.85" />
             </g>
             {/* eye stays crisp so it reads at small sizes */}
-            <ellipse ref={eyeRef} cx="230" cy="88" rx="12" ry="13" fill="#fff" stroke={INK} strokeWidth="4" />
+            <ellipse ref={eyeRef} cx="230" cy="88" rx="12" ry="13" fill="#fff" stroke={INK} strokeWidth={STROKE.detail} />
             <g ref={pupilRef}>
               <circle cx="231" cy="89" r="7.5" fill={INK} />
               <circle cx="228.5" cy="86" r="2.6" fill="#fff" />
             </g>
             <g ref={lidRef} style={{ transformOrigin: "230px 75px", transform: "scaleY(0)" }}>
-              <ellipse cx="230" cy="88" rx="12" ry="13" fill={IVORY} stroke={INK} strokeWidth="4" />
-              <path d="M219 90 Q230 96 241 90" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+              <ellipse cx="230" cy="88" rx="12" ry="13" fill={IVORY} stroke={INK} strokeWidth={STROKE.detail} />
+              <path d="M219 90 Q230 96 241 90" fill="none" stroke={INK} strokeWidth={STROKE.detail} strokeLinecap="round" />
             </g>
           </g>
         </svg>

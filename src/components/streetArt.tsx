@@ -1,4 +1,4 @@
-import { CLAY, INK, IVORY } from "../brand";
+import { CLAY, INK, IVORY, STROKE } from "../brand";
 
 /*
  * The skyline's two ends, in its 1200x400 coordinates (ground at y 380).
@@ -42,11 +42,11 @@ function SideShop({ x, w, top }: Shop) {
       <rect data-obstacle x={x} y={top} width={w} height={GROUND - top} fill={CLAY} />
       <path d={`M${x - 4} ${top} H${x + w + 4}`} fill="none" />
       {[x + 10, x + w - 24].map((wx) => (
-        <rect key={wx} x={wx} y={top + 14} width="14" height="22" fill="none" strokeWidth="3" />
+        <rect key={wx} x={wx} y={top + 14} width="14" height="22" fill="none" strokeWidth={STROKE.detail} />
       ))}
       <rect x={x + 4} y={SIGN_Y} width={w - 8} height="16" fill={INK} />
-      <path d={`M${x + 2} ${AWNING_Y} H${x + w - 2} L${x + w + 2} ${AWNING_Y + 12} H${x - 2} Z`} fill={IVORY} strokeWidth="3" />
-      <rect x={x + 6} y={AWNING_Y + 18} width={w - 12} height={GROUND - AWNING_Y - 18} fill="none" strokeWidth="3" />
+      <path d={`M${x + 2} ${AWNING_Y} H${x + w - 2} L${x + w + 2} ${AWNING_Y + 12} H${x - 2} Z`} fill={IVORY} strokeWidth={STROKE.detail} />
+      <rect x={x + 6} y={AWNING_Y + 18} width={w - 12} height={GROUND - AWNING_Y - 18} fill="none" strokeWidth={STROKE.detail} />
     </g>
   );
 }
@@ -64,10 +64,10 @@ export function StreetArt() {
       <path d="M162 206 Q196 166 230 206 Z" fill={IVORY} />
       <rect x="154" y="206" width="84" height="10" fill={IVORY} />
       {[168, 204].map((x) => (
-        <path key={x} d={`M${x} 256 V236 Q${x + 10} 224 ${x + 20} 236 V256 Z`} fill="none" strokeWidth="3" />
+        <path key={x} d={`M${x} 256 V236 Q${x + 10} 224 ${x + 20} 236 V256 Z`} fill="none" strokeWidth={STROKE.detail} />
       ))}
       <rect x="162" y="270" width="68" height="22" fill={INK} />
-      <path d="M160 300 H232 L238 314 H154 Z" fill={IVORY} strokeWidth="3" />
+      <path d="M160 300 H232 L238 314 H154 Z" fill={IVORY} strokeWidth={STROKE.detail} />
       <rect x="166" y="320" width="60" height={GROUND - 320} fill={INK} />
       <g stroke="none" fill={IVORY}>
         {[172, 184, 196, 208, 220].map((x) => (
@@ -76,8 +76,8 @@ export function StreetArt() {
       </g>
 
       {/* Out front: a marble-top table, its leg drawn light against the dark shop. */}
-      <path d="M196 356 V377 M188 377 H204" fill="none" stroke={IVORY} strokeWidth="3" />
-      <rect x="181" y="350" width="30" height="6" fill={IVORY} strokeWidth="3" />
+      <path d="M196 356 V377 M188 377 H204" fill="none" stroke={IVORY} strokeWidth={STROKE.detail} />
+      <rect x="181" y="350" width="30" height="6" fill={IVORY} strokeWidth={STROKE.detail} />
     </g>
   );
 }
@@ -134,31 +134,31 @@ export function ModernArt() {
         d={`M${MAYBANK.back.x0} ${GROUND} V${MAYBANK.back.high} L${MAYBANK.back.x1} ${MAYBANK.back.low} V${GROUND} Z`}
         fill={IVORY}
       />
-      <path d={floors(196, MAYBANK.front.x1, MAYBANK.back.x1)} fill="none" strokeWidth="2" />
+      <path d={floors(196, MAYBANK.front.x1, MAYBANK.back.x1)} fill="none" strokeWidth={STROKE.fine} />
       <path
         data-obstacle
         d={`M${MAYBANK.front.x0} ${GROUND} V${MAYBANK.front.low} L${MAYBANK.front.x1} ${MAYBANK.front.high} V${GROUND} Z`}
         fill={IVORY}
       />
-      <path d={floors(194, MAYBANK.front.x0, MAYBANK.front.x1)} fill="none" strokeWidth="2" />
+      <path d={floors(194, MAYBANK.front.x0, MAYBANK.front.x1)} fill="none" strokeWidth={STROKE.fine} />
       {/* Its corner entrance under a tiered triangular canopy. */}
-      <path d="M836 380 V368 L850 358 L864 368 V380" fill={IVORY} strokeWidth="2.5" />
+      <path d="M836 380 V368 L850 358 L864 368 V380" fill={IVORY} strokeWidth={STROKE.fine} />
 
-      <circle cx="1014" cy="280" r="10" fill={IVORY} strokeWidth="3" />
+      <circle cx="1014" cy="280" r="10" fill={IVORY} strokeWidth={STROKE.detail} />
 
       {/* Billboard on stilts above the hall. */}
-      <path d={`M976 ${BOARD.y + BOARD.h} V296 M1052 ${BOARD.y + BOARD.h} V294`} fill="none" strokeWidth="4" />
+      <path d={`M976 ${BOARD.y + BOARD.h} V296 M1052 ${BOARD.y + BOARD.h} V294`} fill="none" strokeWidth={STROKE.detail} />
       <rect data-obstacle x={BOARD.x - 6} y={BOARD.y - 6} width={BOARD.w + 12} height={BOARD.h + 12} fill={IVORY} />
-      <rect x={BOARD.x} y={BOARD.y} width={BOARD.w} height={BOARD.h} fill={INK} strokeWidth="3" />
+      <rect x={BOARD.x} y={BOARD.y} width={BOARD.w} height={BOARD.h} fill={INK} strokeWidth={STROKE.detail} />
 
       {/* Conference hall: a swooping roof over a glass front. */}
       <rect data-obstacle x="938" y="316" width="152" height={GROUND - 316} fill={CLAY} />
-      <path d={HALL_MULLIONS.map((x) => `M${x} 316 V${GROUND}`).join(" ")} fill="none" strokeWidth="2.5" />
-      <path d="M938 346 H1090" fill="none" strokeWidth="2.5" />
+      <path d={HALL_MULLIONS.map((x) => `M${x} 316 V${GROUND}`).join(" ")} fill="none" strokeWidth={STROKE.fine} />
+      <path d="M938 346 H1090" fill="none" strokeWidth={STROKE.fine} />
       <path d="M924 322 C956 294 1040 280 1104 304 L1104 314 C1042 294 958 306 924 330 Z" fill={IVORY} />
       <rect x="958" y="326" width="112" height="14" fill={INK} />
       <rect x="999" y="350" width="30" height={GROUND - 350} fill={INK} />
-      <path d={`M1014 352 V${GROUND}`} fill="none" stroke={IVORY} strokeWidth="2" />
+      <path d={`M1014 352 V${GROUND}`} fill="none" stroke={IVORY} strokeWidth={STROKE.fine} />
 
     </g>
   );

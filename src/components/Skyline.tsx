@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { CLAY, INK, IVORY } from "../brand";
+import { CLAY, INK, IVORY, STROKE } from "../brand";
 import { ModernArt, ModernText, StreetArt, StreetText } from "./streetArt";
 
 /**
@@ -76,7 +76,7 @@ export function Skyline({ className }: { className?: string }) {
           Towers: inside the strip phones still show, clear of the top-right
           sky where Claude FM opens. Only the static disc is filtered; the
           turning rays stay unfiltered so the wobble never re-renders. */}
-      <g className="sky-sun" data-obstacle stroke={INK} strokeWidth="5" strokeLinecap="round">
+      <g className="sky-sun" data-obstacle stroke={INK} strokeWidth={STROKE.outline} strokeLinecap="round">
         <g className="sky-sun-rays">
           {SUN_RAYS.map(([x1, y1, x2, y2]) => (
             <line key={`${x1}-${y1}`} x1={x1} y1={y1} x2={x2} y2={y2} />
@@ -87,7 +87,7 @@ export function Skyline({ className }: { className?: string }) {
       {/* data-obstacle marks the shapes Claude FM's card avoids covering.
           Outline-only buildings are filled with the sky's clay so the plane,
           drawn behind them while far off, is hidden by them. */}
-      <g filter={`url(#${filterId})`} stroke={INK} strokeWidth="5" strokeLinejoin="round" strokeLinecap="round">
+      <g filter={`url(#${filterId})`} stroke={INK} strokeWidth={STROKE.outline} strokeLinejoin="round" strokeLinecap="round">
         {BUILDINGS.map(([x, top, w]) => (
           <rect key={x} data-obstacle x={x} y={top} width={w} height={GROUND - top} fill={CLAY} />
         ))}
@@ -100,18 +100,18 @@ export function Skyline({ className }: { className?: string }) {
         <path
           d="M336 168 L364 206 L392 168 M348 122 L364 150 L380 122 M340 250 L364 286 L388 250 M334 330 L364 366 L394 330"
           fill="none"
-          strokeWidth="3.5"
+          strokeWidth={STROKE.detail}
         />
-        <path data-obstacle d="M364 74 V6" fill="none" strokeWidth="4" />
+        <path data-obstacle d="M364 74 V6" fill="none" strokeWidth={STROKE.detail} />
 
         {/* Petronas Twin Towers + skybridge */}
         {SCENE.towers.map((cx) => (
           <path key={cx} data-obstacle d={petronas(cx)} fill={IVORY} />
         ))}
         <rect x="580" y="224" width="60" height="12" fill={IVORY} />
-        <path d={`M${SCENE.bridgeX} 236 L582 292 M${SCENE.bridgeX} 236 L638 292`} fill="none" strokeWidth="4" />
+        <path d={`M${SCENE.bridgeX} 236 L582 292 M${SCENE.bridgeX} 236 L638 292`} fill="none" strokeWidth={STROKE.detail} />
         {[200, 250, 300, 340].map((y) => (
-          <path key={y} d={`M528 ${y} H572 M648 ${y} H692`} fill="none" strokeWidth="3" />
+          <path key={y} d={`M528 ${y} H572 M648 ${y} H692`} fill="none" strokeWidth={STROKE.detail} />
         ))}
 
         <StreetArt />
@@ -121,9 +121,9 @@ export function Skyline({ className }: { className?: string }) {
         <g data-obstacle>
           <path d="M746 380 L753 176 H767 L774 380 Z" fill={IVORY} />
           <path d="M726 168 C726 150 794 150 794 168 C794 186 726 186 726 168 Z" fill={IVORY} />
-          <path d="M728 168 H792" fill="none" strokeWidth="3" />
+          <path d="M728 168 H792" fill="none" strokeWidth={STROKE.detail} />
           <rect x="749" y="134" width="22" height="20" fill={IVORY} />
-          <path d="M760 134 V36" fill="none" strokeWidth="4" />
+          <path d="M760 134 V36" fill="none" strokeWidth={STROKE.detail} />
         </g>
       </g>
       <StreetText />
@@ -133,7 +133,7 @@ export function Skyline({ className }: { className?: string }) {
           would be expensive for no visible wobble). It runs past the bottom
           of the viewBox into the hero's bottom edge. */}
       <rect x="-2400" y={GROUND - 3} width="6000" height="60" fill={INK} />
-      <path d={`M-2400 ${GROUND + 10} H3600`} stroke={IVORY} strokeWidth="2.5" strokeDasharray="16 14" fill="none" />
+      <path d={`M-2400 ${GROUND + 10} H3600`} stroke={IVORY} strokeWidth={STROKE.fine} strokeDasharray="16 14" fill="none" />
     </svg>
   );
 }

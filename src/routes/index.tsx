@@ -15,7 +15,7 @@ import { StickerRail } from "../components/StickerRail";
 import { Stickers } from "../components/Stickers";
 import { TabBar } from "../components/TabBar";
 import { Terminal } from "../components/Terminal";
-import { siteName, siteUrl } from "../site";
+import { host, siteName, siteUrl } from "../site";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -108,6 +108,9 @@ function Home() {
             </div>
             <div className="hero-head">
               <HeroTitle />
+              <p className="hero-lede">
+                Meetups, coworking and hands-on sessions for anyone building with Claude in KL.
+              </p>
               <button
                 type="button"
                 className="btn btn-ink hero-cta"
@@ -185,7 +188,16 @@ function Home() {
           loading="lazy"
         />
         <span>{new URL(siteUrl).host}</span>
-        <span>A Claude Community chapter · Kuala Lumpur, MY</span>
+        <span>
+          A Claude Community chapter<span className="foot-sep"> · </span>
+          <span className="foot-place">Kuala Lumpur, MY</span>
+        </span>
+        <span>
+          Hosted by {host.name},{" "}
+          <a href={host.ambassadors} className="foot-link" target="_blank" rel="noopener">
+            Claude Ambassador
+          </a>
+        </span>
         <span>Claude is a trademark of Anthropic.</span>
         <SoundToggle />
       </footer>

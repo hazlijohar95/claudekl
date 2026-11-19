@@ -45,7 +45,7 @@ export function HeroTitle() {
     };
     // Start once the display face is in, so letters never swap font mid-type.
     // Give up waiting after 900ms and type in whatever is loaded.
-    const fontReady = document.fonts.load('300 64px "Newsreader Variable"');
+    const fontReady = document.fonts.load('300 64px "Anthropic Serif Display"');
     const timeout = new Promise((resolve) => window.setTimeout(resolve, 900));
     void Promise.race([fontReady, timeout]).then(() => {
       if (!cancelled) step();

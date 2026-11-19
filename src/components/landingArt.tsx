@@ -1,4 +1,4 @@
-import { CLAY, INK, IVORY, MY_BLUE, MY_RED, MY_YELLOW, TEA } from "../brand";
+import { CLAY, INK, IVORY, MY_BLUE, MY_RED, MY_YELLOW, TEA, STROKE } from "../brand";
 import { type Layer, PixelArt, type Rect, Rects, raster, stripes } from "./pixel";
 
 const WHITE = "#FFFFFF";
@@ -75,7 +75,7 @@ const CANOPY = stripes(CANOPY_ROWS, [50, 90, 130], [IVORY, CLAY]);
 export function ChuteArt() {
   return (
     <>
-      <g stroke={INK} strokeWidth="3" shapeRendering="geometricPrecision">
+      <g stroke={INK} strokeWidth={STROKE.detail} shapeRendering="geometricPrecision">
         <line x1="12" y1="-73" x2="14" y2="44" />
         <line x1="50" y1="-73" x2="22" y2="44" />
         <line x1="130" y1="-73" x2="158" y2="44" />
@@ -131,8 +131,8 @@ export function PlaneBodyArt() {
 export function BannerArt() {
   return (
     <>
-      <line x1="4" y1="30" x2="-34" y2="32" stroke={INK} strokeWidth="2" shapeRendering="geometricPrecision" />
-      <rect x="-200" y="17" width="166" height="30" fill={IVORY} stroke={INK} strokeWidth="4" />
+      <line x1="4" y1="30" x2="-34" y2="32" stroke={INK} strokeWidth={STROKE.fine} shapeRendering="geometricPrecision" />
+      <rect x="-200" y="17" width="166" height="30" fill={IVORY} stroke={INK} strokeWidth={STROKE.detail} />
       <text
         x="-117"
         y="38"

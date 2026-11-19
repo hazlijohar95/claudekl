@@ -1,5 +1,5 @@
-import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
-import { channels, coords, programs } from "../site";
+import { type FormEvent, lazy, type ReactNode, Suspense, useEffect, useRef, useState } from "react";
+import { channels, coords, credits, programs } from "../site";
 import { play } from "../sound";
 
 type Entry = { id: number; input?: string; output: ReactNode };
@@ -15,7 +15,10 @@ const KANCIL_ASCII = String.raw`
 
 type Hooks = { onKancil: () => void; onClawd: () => void; onLanding: () => void };
 
-function run(raw: string, { onKancil, onClawd, onLanding }: Hooks): ReactNode | "clear" {
+// Loaded on first /credit, so the QR encoder stays out of the first load.
+const CreditQR = lazy(() => import("./CreditQR"));
+
+function run(raw: string, { onKancil, onClawd, onLanding, onCredit }: Hooks & { onCredit: () => void }): ReactNode | "clear" {
   const cmd = raw.trim().toLowerCase().replace(/^\//, "");
   switch (cmd) {
     case "":
@@ -68,6 +71,22 @@ function run(raw: string, { onKancil, onClawd, onLanding }: Hooks): ReactNode | 
     case "teh-tarik":
     case "teh tarik":
       return <span>☕ Kurang manis, satu. Brewing…</span>;
+    // Hidden from /help: the host runs it at an event to put the credits QR on screen.
+    case "credit":
+    case "credits": {
+      if (!credits || Date.now() > Date.parse(credits.until)) {
+        return <span className="t-dim">No credits running right now. Catch the next event: /join</span>;
+      }
+      onCredit();
+      return (
+        <span>
+          <span className="t-clay">✻ {credits.amount} API credits</span> · scan the QR{" "}
+          <button type="button" className="t-link" onClick={onCredit}>
+            show again
+          </button>
+        </span>
+      );
+    }
     case "clear":
       return "clear";
     case "sudo":
@@ -103,6 +122,8 @@ const WELCOME: Entry = {
 export function Terminal(hooks: Hooks) {
   const [entries, setEntries] = useState<Entry[]>([WELCOME]);
   const [value, setValue] = useState("");
+  // null until the first /credit, then the dialog stays mounted.
+  const [credit, setCredit] = useState<boolean | null>(null);
   const nextId = useRef(1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -114,7 +135,7 @@ export function Terminal(hooks: Hooks) {
 
   const submit = (raw: string) => {
     play("enter");
-    const output = run(raw, hooks);
+    const output = run(raw, { ...hooks, onCredit: () => setCredit(true) });
     if (output === "clear") {
       setEntries([]);
     } else {
@@ -180,6 +201,11 @@ export function Terminal(hooks: Hooks) {
           </button>
         ))}
       </div>
+      {credit !== null && (
+        <Suspense fallback={null}>
+          <CreditQR open={credit} onClose={() => setCredit(false)} />
+        </Suspense>
+      )}
     </div>
   );
 }

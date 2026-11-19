@@ -9,3 +9,7 @@ export const MY_RED = "#CC0001";
 export const MY_YELLOW = "#FFCC00";
 // Milky tea under its foam, for the Clawds' cups.
 export const TEA = "#C98A55";
+
+// One line weight per role across every SVG illustration (skyline, street,
+// kancil, landing), so the drawings read as one hand.
+export const STROKE = { outline: 5, detail: 3.5, fine: 2 } as const;
